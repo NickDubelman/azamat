@@ -4,6 +4,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
+// Table is a SQL table
 type Table struct {
 	Name    string
 	Columns []string
