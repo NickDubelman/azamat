@@ -2,12 +2,25 @@ package azamat
 
 import (
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jmoiron/sqlx"
 )
 
 // Table is a SQL table
 type Table[T any] struct {
 	Name    string
 	Columns []string
+}
+
+func (t Table[T]) GetAll(db *sqlx.DB) ([]T, error) {
+	return t.Select().All(db)
+}
+
+func (t Table[T]) GetByID(db *sqlx.DB, id int) (T, error) {
+	return t.Select().Where("id = ?", id).Only(db)
+}
+
+func (t Table[T]) GetByIDs(db *sqlx.DB, ids ...int) ([]T, error) {
+	return t.Select().Where(sq.Eq{"id": ids}).All(db)
 }
 
 // Builders
