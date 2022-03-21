@@ -2,7 +2,10 @@ module github.com/NickDubelman/azamat
 
 go 1.18
 
-require github.com/Masterminds/squirrel v1.5.2
+require (
+	github.com/Masterminds/squirrel v1.5.2
+	github.com/jmoiron/sqlx v1.3.4
+)
 
 require (
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
