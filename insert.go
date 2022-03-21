@@ -1,8 +1,6 @@
 package azamat
 
 import (
-	"database/sql"
-
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 )
@@ -11,8 +9,14 @@ type InsertBuilder struct {
 	sq.InsertBuilder
 }
 
-func (b InsertBuilder) Run(db *sqlx.DB) (sql.Result, error) {
-	return b.RunWith(db).Exec()
+func (b InsertBuilder) Run(db *sqlx.DB) (int, error) {
+	result, err := b.RunWith(db).Exec()
+	if err != nil {
+		return 0, err
+	}
+
+	insertedID, err := result.LastInsertId()
+	return int(insertedID), err
 }
 
 func (b InsertBuilder) PlaceholderFormat(f sq.PlaceholderFormat) InsertBuilder {
