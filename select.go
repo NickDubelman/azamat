@@ -44,7 +44,7 @@ func (b SelectBuilder[T]) Only(db *sqlx.DB) (T, error) {
 		return row, fmt.Errorf("expected to only get row")
 	}
 
-	return row, nil
+	return rows[0], nil
 }
 
 func (b SelectBuilder[T]) PlaceholderFormat(f sq.PlaceholderFormat) SelectBuilder[T] {

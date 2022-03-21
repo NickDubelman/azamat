@@ -14,6 +14,10 @@ type Table[T any] struct {
 	RawSchema string
 }
 
+func (t Table[T]) String() string {
+	return t.Name
+}
+
 func (t Table[T]) GetAll(db *sqlx.DB) ([]T, error) {
 	return t.Select().All(db)
 }
@@ -40,6 +44,13 @@ func (t Table[T]) CreateIfNotExists(db *sqlx.DB) error {
 	return err
 }
 
+func PrefixColumns(prefix string, columns []string) (cols []string) {
+	for _, c := range columns {
+		cols = append(cols, fmt.Sprintf("%s.%s", prefix, c))
+	}
+	return
+}
+
 // Builders
 
 // Select returns a buildable Select query that is bound to a specific table name. If
@@ -47,7 +58,7 @@ func (t Table[T]) CreateIfNotExists(db *sqlx.DB) error {
 func (t Table[T]) Select(columns ...string) SelectBuilder[T] {
 	actualColumns := columns
 	if len(columns) == 0 {
-		actualColumns = t.Columns
+		actualColumns = PrefixColumns(t.Name, t.Columns)
 	}
 
 	return SelectBuilder[T]{sq.Select(actualColumns...).From(t.Name)}
