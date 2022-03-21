@@ -1,14 +1,17 @@
 package azamat
 
 import (
+	"fmt"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 )
 
 // Table is a SQL table
 type Table[T any] struct {
-	Name    string
-	Columns []string
+	Name      string
+	Columns   []string
+	RawSchema string
 }
 
 func (t Table[T]) GetAll(db *sqlx.DB) ([]T, error) {
@@ -21,6 +24,18 @@ func (t Table[T]) GetByID(db *sqlx.DB, id int) (T, error) {
 
 func (t Table[T]) GetByIDs(db *sqlx.DB, ids ...int) ([]T, error) {
 	return t.Select().Where(sq.Eq{"id": ids}).All(db)
+}
+
+func (t Table[T]) Create(db *sqlx.DB) error {
+	createTable := fmt.Sprintf("CREATE TABLE %s", t.Name)
+	_, err := db.Exec(createTable)
+	return err
+}
+
+func (t Table[T]) CreateIfNotExists(db *sqlx.DB) error {
+	createTable := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s", t.Name)
+	_, err := db.Exec(createTable)
+	return err
 }
 
 // Builders
