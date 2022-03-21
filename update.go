@@ -10,7 +10,7 @@ type UpdateBuilder struct {
 	sq.UpdateBuilder
 }
 
-func Update[T any](table string) UpdateBuilder {
+func Update(table string) UpdateBuilder {
 	return UpdateBuilder{sq.Update(table)}
 }
 

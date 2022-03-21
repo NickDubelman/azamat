@@ -8,7 +8,7 @@ type InsertBuilder struct {
 	sq.InsertBuilder
 }
 
-func Insert[T any](into string) InsertBuilder {
+func Insert(into string) InsertBuilder {
 	return InsertBuilder{sq.Insert(into)}
 }
 

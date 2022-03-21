@@ -10,7 +10,7 @@ type DeleteBuilder struct {
 	sq.DeleteBuilder
 }
 
-func Delete[T any](from string) DeleteBuilder {
+func Delete(from string) DeleteBuilder {
 	return DeleteBuilder{sq.Delete(from)}
 }
 
