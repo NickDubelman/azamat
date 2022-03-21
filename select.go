@@ -2,6 +2,7 @@ package azamat
 
 import (
 	"database/sql"
+	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
@@ -11,7 +12,7 @@ type SelectBuilder[T any] struct {
 	sq.SelectBuilder
 }
 
-func (b SelectBuilder[T]) Run(db *sqlx.DB) ([]T, error) {
+func (b SelectBuilder[T]) All(db *sqlx.DB) ([]T, error) {
 	sql, args, err := b.ToSql()
 	if err != nil {
 		return nil, err
@@ -20,6 +21,30 @@ func (b SelectBuilder[T]) Run(db *sqlx.DB) ([]T, error) {
 	var rows []T
 	err = db.Select(&rows, sql, args...)
 	return rows, err
+}
+
+func (b SelectBuilder[T]) Only(db *sqlx.DB) (T, error) {
+	var row T
+
+	sql, args, err := b.ToSql()
+	if err != nil {
+		return row, err
+	}
+
+	var rows []T
+	if err := db.Select(&rows, sql, args...); err != nil {
+		return row, err
+	}
+
+	if len(rows) == 0 {
+		return row, fmt.Errorf("none found")
+	}
+
+	if len(rows) != 1 {
+		return row, fmt.Errorf("expected to only get row")
+	}
+
+	return row, nil
 }
 
 func (b SelectBuilder[T]) PlaceholderFormat(f sq.PlaceholderFormat) SelectBuilder[T] {
