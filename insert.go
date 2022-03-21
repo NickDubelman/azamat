@@ -8,6 +8,10 @@ type InsertBuilder struct {
 	sq.InsertBuilder
 }
 
+func Insert[T any](into string) InsertBuilder {
+	return InsertBuilder{sq.Insert(into)}
+}
+
 func (b InsertBuilder) Run(runner Runner) (int, error) {
 	result, err := b.RunWith(runner).Exec()
 	if err != nil {

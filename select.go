@@ -11,6 +11,12 @@ type SelectBuilder[T any] struct {
 	sq.SelectBuilder
 }
 
+func Select[T any](columns ...string) SelectBuilder[T] {
+	return SelectBuilder[T]{
+		SelectBuilder: sq.Select(columns...),
+	}
+}
+
 func (b SelectBuilder[T]) All(runner Runner) ([]T, error) {
 	sql, args, err := b.ToSql()
 	if err != nil {
@@ -92,6 +98,11 @@ func (b SelectBuilder[T]) Column(
 	column interface{}, args ...interface{},
 ) sq.SelectBuilder {
 	return b.SelectBuilder.Column(column, args...)
+}
+
+func (b SelectBuilder[T]) From(from string) SelectBuilder[T] {
+	b.SelectBuilder = b.SelectBuilder.From(from)
+	return b
 }
 
 func (b SelectBuilder[T]) JoinClause(pred interface{}, args ...interface{}) SelectBuilder[T] {

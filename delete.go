@@ -10,6 +10,10 @@ type DeleteBuilder struct {
 	sq.DeleteBuilder
 }
 
+func Delete[T any](from string) DeleteBuilder {
+	return DeleteBuilder{sq.Delete(from)}
+}
+
 func (b DeleteBuilder) Run(runner Runner) (sql.Result, error) {
 	return b.RunWith(runner).Exec()
 }

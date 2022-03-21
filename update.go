@@ -10,6 +10,10 @@ type UpdateBuilder struct {
 	sq.UpdateBuilder
 }
 
+func Update[T any](table string) UpdateBuilder {
+	return UpdateBuilder{sq.Update(table)}
+}
+
 func (b UpdateBuilder) Run(runner Runner) (sql.Result, error) {
 	return b.RunWith(runner).Exec()
 }
