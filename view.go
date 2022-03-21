@@ -10,12 +10,16 @@ import (
 // View can be used when an entity doesn't map precisely to a specific table. This is
 // not to be confused with "SQL views," but it is similar in concept. A View is
 // associated with a custom query. This can be useful when you have an entity where
-// some of the fields come from joining multiple tables. Often, you may be joining
-// two tables that both have an ID column-- in this case you need to specify IDFrom
-// so that GetByID knows which table's ID to use
+// some of the fields come from joining multiple tables.
 type View[T any] struct {
+	// When we GetByID, we may need to know what table ID comes from. This is
+	// optional and only needed if you intend to use GetByID(s) AND there is an
+	// ambiguity in the custom query where multiple referenced tables have an "id"
+	// column
 	IDFrom fmt.Stringer
-	Query  func() sq.SelectBuilder
+
+	// Query is the custom query that will be used to fetch the entity
+	Query func() sq.SelectBuilder
 }
 
 func (v View[T]) GetAll(db *sqlx.DB) ([]T, error) {
