@@ -5,25 +5,24 @@ import (
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
 )
 
 type SelectBuilder[T any] struct {
 	sq.SelectBuilder
 }
 
-func (b SelectBuilder[T]) All(db *sqlx.DB) ([]T, error) {
+func (b SelectBuilder[T]) All(runner Runner) ([]T, error) {
 	sql, args, err := b.ToSql()
 	if err != nil {
 		return nil, err
 	}
 
 	var rows []T
-	err = db.Select(&rows, sql, args...)
+	err = runner.Select(&rows, sql, args...)
 	return rows, err
 }
 
-func (b SelectBuilder[T]) Only(db *sqlx.DB) (T, error) {
+func (b SelectBuilder[T]) Only(runner Runner) (T, error) {
 	var row T
 
 	sql, args, err := b.ToSql()
@@ -32,7 +31,7 @@ func (b SelectBuilder[T]) Only(db *sqlx.DB) (T, error) {
 	}
 
 	var rows []T
-	if err := db.Select(&rows, sql, args...); err != nil {
+	if err := runner.Select(&rows, sql, args...); err != nil {
 		return row, err
 	}
 

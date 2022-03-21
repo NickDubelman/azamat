@@ -4,15 +4,14 @@ import (
 	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
 )
 
 type DeleteBuilder struct {
 	sq.DeleteBuilder
 }
 
-func (b DeleteBuilder) Run(db *sqlx.DB) (sql.Result, error) {
-	return b.RunWith(db).Exec()
+func (b DeleteBuilder) Run(runner Runner) (sql.Result, error) {
+	return b.RunWith(runner).Exec()
 }
 
 func (b DeleteBuilder) PlaceholderFormat(f sq.PlaceholderFormat) DeleteBuilder {

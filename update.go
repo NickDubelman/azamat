@@ -4,15 +4,14 @@ import (
 	"database/sql"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
 )
 
 type UpdateBuilder struct {
 	sq.UpdateBuilder
 }
 
-func (b UpdateBuilder) Run(db *sqlx.DB) (sql.Result, error) {
-	return b.RunWith(db).Exec()
+func (b UpdateBuilder) Run(runner Runner) (sql.Result, error) {
+	return b.RunWith(runner).Exec()
 }
 
 func (b UpdateBuilder) PlaceholderFormat(f sq.PlaceholderFormat) UpdateBuilder {

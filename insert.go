@@ -2,15 +2,14 @@ package azamat
 
 import (
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
 )
 
 type InsertBuilder struct {
 	sq.InsertBuilder
 }
 
-func (b InsertBuilder) Run(db *sqlx.DB) (int, error) {
-	result, err := b.RunWith(db).Exec()
+func (b InsertBuilder) Run(runner Runner) (int, error) {
+	result, err := b.RunWith(runner).Exec()
 	if err != nil {
 		return 0, err
 	}
