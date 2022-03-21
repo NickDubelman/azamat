@@ -27,13 +27,15 @@ func (t Table[T]) GetByIDs(db *sqlx.DB, ids ...int) ([]T, error) {
 }
 
 func (t Table[T]) Create(db *sqlx.DB) error {
-	createTable := fmt.Sprintf("CREATE TABLE %s", t.Name)
+	createTable := fmt.Sprintf("CREATE TABLE %s (%s)", t.Name, t.RawSchema)
 	_, err := db.Exec(createTable)
 	return err
 }
 
 func (t Table[T]) CreateIfNotExists(db *sqlx.DB) error {
-	createTable := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s", t.Name)
+	createTable := fmt.Sprintf(
+		"CREATE TABLE IF NOT EXISTS %s (%s)", t.Name, t.RawSchema,
+	)
 	_, err := db.Exec(createTable)
 	return err
 }
