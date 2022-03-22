@@ -123,7 +123,35 @@ func TestCreate(t *testing.T) {
 }
 
 func TestCreateIfNotExists(t *testing.T) {
-	t.Error("epic failure")
+	db, _ := sqlx.Open("sqlite3", ":memory:")
+
+	type Todo struct {
+		ID    int
+		Title string
+	}
+
+	TodoTable := Table[Todo]{
+		Name:    "todos",
+		Columns: []string{"id", "title"},
+		RawSchema: `
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			title TEXT NOT NULL
+		`,
+	}
+
+	// When table doesn't exist...
+	err := TodoTable.CreateIfNotExists(db)
+	require.NoError(t, err)
+
+	// Make sure table was actually created
+	db.MustExec("SELECT 1 FROM todos")
+
+	// When table already exists...
+	err = TodoTable.CreateIfNotExists(db)
+	require.NoError(t, err)
+
+	// Make sure table still exists
+	db.MustExec("SELECT 1 FROM todos")
 }
 
 func TestPrefixColumns(t *testing.T) {
