@@ -119,7 +119,32 @@ func TestTableGetByIDs(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	t.Error("epic failure")
+	db, _ := sqlx.Open("sqlite3", ":memory:")
+
+	type Todo struct {
+		ID    int
+		Title string
+	}
+
+	TodoTable := Table[Todo]{
+		Name:    "todos",
+		Columns: []string{"id", "title"},
+		RawSchema: `
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			title TEXT NOT NULL
+		`,
+	}
+
+	// When table doesn't exist...
+	err := TodoTable.Create(db)
+	require.NoError(t, err)
+
+	// Make sure table was actually created
+	db.MustExec("SELECT 1 FROM todos")
+
+	// When table already exists...
+	err = TodoTable.Create(db)
+	require.Error(t, err)
 }
 
 func TestCreateIfNotExists(t *testing.T) {
