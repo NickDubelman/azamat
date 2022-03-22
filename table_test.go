@@ -180,5 +180,34 @@ func TestCreateIfNotExists(t *testing.T) {
 }
 
 func TestPrefixColumns(t *testing.T) {
-	t.Error("epic failure")
+	type testCase struct {
+		inputPrefix  string
+		inputColumns []string
+		expected     []string
+	}
+
+	cases := []testCase{
+		{
+			inputPrefix:  "yekshi",
+			inputColumns: []string{"mesh"},
+			expected:     []string{"yekshi.mesh"},
+		},
+
+		{
+			inputPrefix:  "a",
+			inputColumns: []string{"b", "C", "d", "E"},
+			expected:     []string{"a.b", "a.C", "a.d", "a.E"},
+		},
+
+		{
+			inputPrefix:  "",
+			inputColumns: []string{"b", "C", "d", "E"},
+			expected:     []string{".b", ".C", ".d", ".E"},
+		},
+	}
+
+	for _, c := range cases {
+		actual := PrefixColumns(c.inputPrefix, c.inputColumns)
+		require.Equal(t, c.expected, actual)
+	}
 }
