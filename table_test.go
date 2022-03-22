@@ -80,7 +80,42 @@ func TestTableGetByID(t *testing.T) {
 }
 
 func TestTableGetByIDs(t *testing.T) {
-	t.Error("epic failure")
+	db, _ := sqlx.Open("sqlite3", ":memory:")
+
+	type Todo struct {
+		ID    int
+		Title string
+	}
+
+	TodoTable := Table[Todo]{
+		Name:    "todos",
+		Columns: []string{"id", "title"},
+	}
+
+	db.MustExec(`CREATE TABLE todos (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT NOT NULL
+	)`)
+
+	// When there are no entries in the table...
+	todos, err := TodoTable.GetByIDs(db, 69, 420)
+	require.NoError(t, err)
+	require.Len(t, todos, 0)
+
+	// Create some todos
+	todo1, todo2, todo3 := "assist Borat", "find Pamela", "buy bear food"
+	db.MustExec(
+		`INSERT INTO todos (title) VALUES (?), (?), (?)`, todo1, todo2, todo3,
+	)
+
+	// When there are multiple entries in the table...
+	todos, err = TodoTable.GetByIDs(db, 1, 3)
+	require.NoError(t, err)
+	require.Len(t, todos, 2)
+	assert.Equal(t, 1, todos[0].ID)
+	assert.Equal(t, todo1, todos[0].Title)
+	assert.Equal(t, 3, todos[1].ID)
+	assert.Equal(t, todo3, todos[1].Title)
 }
 
 func TestCreate(t *testing.T) {
