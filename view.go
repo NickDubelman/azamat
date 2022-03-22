@@ -13,9 +13,8 @@ import (
 // some of the fields come from joining multiple tables.
 type View[T any] struct {
 	// When we GetByID, we may need to know what table ID comes from. This is
-	// optional and only needed if you intend to use GetByID(s) AND there is an
-	// ambiguity in the custom query where multiple referenced tables have an "id"
-	// column
+	// optional and only needed if there is an ambiguity in the custom query where
+	// multiple referenced tables have an "id" column
 	IDFrom fmt.Stringer
 
 	// Query is the custom query that will be used to fetch the entity
