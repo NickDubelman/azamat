@@ -30,4 +30,49 @@ If you aren't familiar with any of these tools, I encourage you to click the lin
 - [squirrel](https://github.com/Masterminds/squirrel) 🐿 is a SQL query builder. It allows us to programmatically build SQL queries. This is easier to read, less error prone, and more ergonomic than building query strings manually.
 - [generics](https://go.dev/doc/tutorial/generics) are a new feature added to Go in version 1.18 (March 2022). Azamat leverages generics to save you from having to write boilerplate code
 
-## Getting Started
+## Guided Tutorial
+
+Pick a directory to create a project. I am going to use my `Desktop/Dev/Playground` directory:
+
+```sh
+cd Desktop/Dev/Playground
+mkdir azamat-todos
+cd azamat-todos
+```
+
+Initialize a new Go module:
+
+```sh
+go mod init azamat-todos
+touch main.go
+```
+
+Open `main.go` in your editor of choice. To start, we are just going to establish a connection to a database so we can start playing around with azamat:
+
+```go
+package main
+
+import (
+    "fmt"
+
+    _ "github.com/mattn/go-sqlite3"
+)
+
+func main() {
+    // Connect to db
+	db, err := azamat.Connect("sqlite3", ":memory:")
+	if err != nil {
+		panic(err)
+	}
+    fmt.Println(db)
+}
+```
+
+Run the above code and make sure it works:
+
+```sh
+go mod tidy # this will detect and add our go-sqlite3 dep to go.mod
+go run main.go
+```
+
+To keep things simple for this tutorial, we are connecting to an in-memory sqlite database. If you want, you can use a MySQL, MariaDB, Postgres or other SQL database instead. You just have to import the corresponding Go driver. You may also have to adapt some of the SQL syntax, but it should be straightforward.
