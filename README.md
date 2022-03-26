@@ -63,10 +63,10 @@ import (
 
 func main() {
     // Connect to db
-	db, err := azamat.Connect("sqlite3", ":memory:")
-	if err != nil {
-		panic(err)
-	}
+    db, err := azamat.Connect("sqlite3", ":memory:")
+    if err != nil {
+        panic(err)
+    }
     fmt.Println(db)
 }
 ```
@@ -74,7 +74,7 @@ func main() {
 Run the above code and make sure it works:
 
 ```sh
-go mod tidy # this will detect and add our go-sqlite3 dep to go.mod
+go mod tidy # this will detect our deps and add them to go.mod
 go run main.go
 ```
 
@@ -92,9 +92,9 @@ Define the following above your `main` function:
 
 ```go
 type Todo struct {
-	ID       int
-	Title    string
-	Author   string
+    ID       int
+    Title    string
+    Author   string
 }
 
 var TodoTable = azamat.Table[Todo]{
@@ -102,8 +102,8 @@ var TodoTable = azamat.Table[Todo]{
     Columns: []string{"id", "title", "author"},
     RawSchema: `
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL,
-		author TEXT NOT NULL
+        title TEXT NOT NULL,
+        author TEXT NOT NULL
     `,
 }
 ```
@@ -119,15 +119,15 @@ Change your `main` function to:
 ```go
 func main() {
     // Connect to db
-	db, err := azamat.Connect("sqlite3", ":memory:")
-	if err != nil {
-		panic(err)
-	}
+    db, err := azamat.Connect("sqlite3", ":memory:")
+    if err != nil {
+        panic(err)
+    }
 
     // Create table
-	if err := TodoTable.CreateIfNotExists(db); err != nil {
-		panic(err)
-	}
+    if err := TodoTable.CreateIfNotExists(db); err != nil {
+        panic(err)
+    }
 
     // Create an entry in the table
     insert := TodoTable.
