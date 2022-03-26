@@ -55,20 +55,10 @@ func PrefixColumns(prefix string, columns []string) (cols []string) {
 
 // Select returns a buildable Select query that is bound to a specific table name. If
 // no columns are provided, it gets all columns specified by the table
-//
-// FIXME: if columns are provided, then T is likely misleading/incorrect
-//   - need a different API
-//   - get rid of columns arg?
-//   - if you want to add columns to the query, can use .Columns
-//   - if you want to remove columns from the query, cannot use Table, must build
-//     query with azamat.Select?
-func (t Table[T]) Select(columns ...string) SelectBuilder[T] {
-	actualColumns := PrefixColumns(t.Name, columns)
-	if len(columns) == 0 {
-		actualColumns = PrefixColumns(t.Name, t.Columns)
+func (t Table[T]) Select() SelectBuilder[T] {
+	return SelectBuilder[T]{
+		sq.Select(PrefixColumns(t.Name, t.Columns)...).From(t.Name),
 	}
-
-	return SelectBuilder[T]{sq.Select(actualColumns...).From(t.Name)}
 }
 
 func (t Table[T]) SelectColumns(columns ...string) sq.SelectBuilder {
