@@ -61,7 +61,9 @@ func (t Table[T]) Select() SelectBuilder[T] {
 	}
 }
 
-func (t Table[T]) SelectColumns(columns ...string) sq.SelectBuilder {
+// BasicSelect is like Select but downgrades the builder to be non-generic. This is
+// useful when you don't want to select all columns of the table.
+func (t Table[T]) BasicSelect(columns ...string) sq.SelectBuilder {
 	actualColumns := PrefixColumns(t.Name, columns)
 	if len(columns) == 0 {
 		actualColumns = PrefixColumns(t.Name, t.Columns)

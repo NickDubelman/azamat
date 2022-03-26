@@ -48,7 +48,7 @@ func TestViewGetAll(t *testing.T) {
 			)
 
 			return TodoTable.
-				SelectColumns("id", "title").
+				BasicSelect("id", "title").
 				Columns("name AS author").
 				Join(join)
 		},
@@ -132,7 +132,7 @@ func TestViewGetByID(t *testing.T) {
 			)
 
 			return TodoTable.
-				SelectColumns("id", "title").
+				BasicSelect("id", "title").
 				Columns("name AS author").
 				Join(join)
 		},
@@ -212,7 +212,7 @@ func TestViewGetByIDs(t *testing.T) {
 			)
 
 			return TodoTable.
-				SelectColumns("id", "title").
+				BasicSelect("id", "title").
 				Columns("name AS author").
 				Join(join)
 		},

@@ -87,13 +87,11 @@ func (b SelectBuilder[T]) Options(options ...string) SelectBuilder[T] {
 }
 
 // Downgrades the builder to a regular squirrel builder
-// TODO: provide generic type to change the type
 func (b SelectBuilder[T]) Columns(columns ...string) sq.SelectBuilder {
 	return b.SelectBuilder.Columns(columns...)
 }
 
 // Downgrades the builder to a regular squirrel builder
-// TODO: provide generic type to change the type
 func (b SelectBuilder[T]) Column(
 	column interface{}, args ...interface{},
 ) sq.SelectBuilder {
