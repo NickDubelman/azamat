@@ -153,5 +153,23 @@ func main() {
         panic(err)
     }
     fmt.Println("todo by id:", todo)
+
+    // Write a custom query
+    me := "Azamat"
+    query := TodoTable.Select().Where("author = ?", me)
+
+    // We use All() when we want all of the rows returned by the query
+    todos, err = query.All(db)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("custom query (all):", todos)
+
+    // We use Only() when we expect the query to only return a single row
+    todo, err = query.Only(db)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("custom query (only):", todo)
 }
 ```
