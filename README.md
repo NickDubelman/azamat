@@ -1,4 +1,4 @@
-# azamat
+# azamat 🇰🇿
 
 A lightweight sidekick for accessing SQL databases in Go.
 
