@@ -12,10 +12,15 @@ type Table[T any] struct {
 	Name      string
 	Columns   []string
 	RawSchema string
+	Postgres  bool
 }
 
 func (t Table[T]) String() string {
 	return t.Name
+}
+
+func (t Table[T]) IsPostgres() bool {
+	return t.Postgres || Postgres
 }
 
 func (t Table[T]) GetAll(db *sqlx.DB) ([]T, error) {
@@ -56,6 +61,12 @@ func PrefixColumns(prefix string, columns []string) (cols []string) {
 // Select returns a buildable Select query that is bound to a specific table name. If
 // no columns are provided, it gets all columns specified by the table
 func (t Table[T]) Select() SelectBuilder[T] {
+	if t.IsPostgres() {
+		return SelectBuilder[T]{
+			psql.Select(PrefixColumns(t.Name, t.Columns)...).From(t.Name),
+		}
+	}
+
 	return SelectBuilder[T]{
 		sq.Select(PrefixColumns(t.Name, t.Columns)...).From(t.Name),
 	}
@@ -69,20 +80,36 @@ func (t Table[T]) BasicSelect(columns ...string) sq.SelectBuilder {
 		actualColumns = PrefixColumns(t.Name, t.Columns)
 	}
 
+	if t.IsPostgres() {
+		return psql.Select(actualColumns...).From(t.Name)
+	}
+
 	return sq.Select(actualColumns...).From(t.Name)
 }
 
 // Insert returns a buildable Insert statement that is bound to a specific table name
 func (t Table[T]) Insert() InsertBuilder {
-	return InsertBuilder{sq.Insert(t.Name)}
+	if t.IsPostgres() {
+		return InsertBuilder{psql.Insert(t.Name), true}
+	}
+
+	return InsertBuilder{sq.Insert(t.Name), false}
 }
 
 // Update returns a buildable Update statement that is bound to a specific table name
 func (t Table[T]) Update() UpdateBuilder {
+	if t.IsPostgres() {
+		return UpdateBuilder{psql.Update(t.Name)}
+	}
+
 	return UpdateBuilder{sq.Update(t.Name)}
 }
 
 // Delete returns a buildable Delete statement that is bound to a specific table name
 func (t Table[T]) Delete() DeleteBuilder {
+	if t.IsPostgres() {
+		return DeleteBuilder{psql.Delete(t.Name)}
+	}
+
 	return DeleteBuilder{sq.Delete(t.Name)}
 }

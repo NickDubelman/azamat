@@ -6,20 +6,35 @@ import (
 
 type InsertBuilder struct {
 	sq.InsertBuilder
+	postgres bool
 }
 
 func Insert(into string) InsertBuilder {
-	return InsertBuilder{sq.Insert(into)}
+	return InsertBuilder{sq.Insert(into), false}
 }
 
+// Run executes the insert and returns the last inserted ID
 func (b InsertBuilder) Run(runner Runner) (int, error) {
+	if b.IsPostgres() {
+		return runPostgresInsert(b, runner)
+	}
+
 	result, err := b.RunWith(runner).Exec()
 	if err != nil {
 		return 0, err
 	}
 
-	insertedID, err := result.LastInsertId()
-	return int(insertedID), err
+	lastInsertID, err := result.LastInsertId()
+	return int(lastInsertID), err
+}
+
+func (b InsertBuilder) IsPostgres() bool {
+	return b.postgres || Postgres
+}
+
+func (b InsertBuilder) SetPostgres(isPostgres bool) InsertBuilder {
+	b.postgres = isPostgres
+	return b
 }
 
 func (b InsertBuilder) PlaceholderFormat(f sq.PlaceholderFormat) InsertBuilder {
