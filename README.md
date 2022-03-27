@@ -39,3 +39,62 @@ As a brief summary:
 ## Getting Started
 
 For a detailed introduction to azamat, check out the [guided tutorial](tutorial.md).
+
+```go
+// Imagine we have the following entity...
+type Todo struct {
+	ID        int
+	Title     string
+	Completed bool
+}
+
+// With azamat, we define our tables as /generic/ structs
+
+// These structs accept a type parameter that tell azamat how to unmarshal rows in
+// the given table
+
+var TodoTable = azamat.Table[Todo]{
+	Name:    "todos",
+	Columns: []string{"id", "title", "completed"},
+}
+
+func main() {
+	db, err := azamat.Connect(...)
+
+	// Insert an entry to table
+	todoTitle := "buy food for bear"
+	insert := TodoTable.
+		Insert().
+		Columns("title", "completed").
+		Values(todoTitle, false)
+
+	todoID, err := insert.Run(db)
+
+	// We don't have to implement the GetByID boilerplate
+	todo, err := TodoTable.GetByID(db, todoID)
+
+	// We don't have to implement the GetAll boilerplate
+	todos, err := TodoTable.GetAll(db)
+
+	// We can build and execute queries
+	query := TodoTable.Select().Where("completed = ?", false)
+	todos, err = query.All(db) // 'All' gets all rows returned by the query
+
+	query = TodoTable.Select().Where("title = ?", todoTitle)
+	todo, err = query.Only(db) // 'Only' expects a single row to be returned
+
+	// Update entry in table
+	update := TodoTable.Update().
+		Set("title", todoTitle+"🐻").
+		Set("completed", true).
+		Where("id = ?", todoID)
+
+	_, err = update.Run(db)
+
+	// Delete entry from table
+	delete := TodoTable.Delete().Where("id = ?", todoID)
+	_, err = delete.Run(db)
+
+    // All of the above code is able to be run on a DB or as part of a Tx
+}
+```
