@@ -2,7 +2,7 @@
 
 A lightweight sidekick for accessing SQL databases in Go.
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Ken_Davitian_2010.jpg" alt="Azamat Bagatov" width="200"/>
+<img alt="Azamat Bagatov" width="200" src=".github/assets/azamat.png" />
 
 ## Overview
 
