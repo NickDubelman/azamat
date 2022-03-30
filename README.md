@@ -88,3 +88,9 @@ func main() {
     // All of the above code is able to be run on a DB or as part of a Tx
 }
 ```
+
+## Similar Projects
+
+- [genorm](https://github.com/mazrean/genorm)
+- [dbr](https://github.com/gocraft/dbr)
+- [go-structured-query](https://github.com/bokwoon95/go-structured-query)
