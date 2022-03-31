@@ -51,19 +51,8 @@ var TodoTable = azamat.Table[Todo]{
 func main() {
     db, err := azamat.Connect(...)
 
-    // Insert an entry to table
-    todoTitle := "buy food for bear"
-    insert := TodoTable.
-        Insert().
-        Columns("title", "completed").
-        Values(todoTitle, false)
-
-    todoID, err := insert.Run(db)
-
-    // We don't have to implement the GetByID boilerplate
+    // We can GetByID and GetAll
     todo, err := TodoTable.GetByID(db, todoID)
-
-    // We don't have to implement the GetAll boilerplate
     todos, err := TodoTable.GetAll(db)
 
     // We can build and execute queries
@@ -72,6 +61,15 @@ func main() {
 
     query = TodoTable.Select().Where("title = ?", todoTitle)
     todo, err = query.Only(db) // 'Only' expects a single row to be returned
+
+    // Insert an entry to table
+    todoTitle := "buy food for bear"
+    insert := TodoTable.
+        Insert().
+        Columns("title", "completed").
+        Values(todoTitle, false)
+
+    todoID, err := insert.Run(db)
 
     // Update entry in table
     update := TodoTable.Update().
