@@ -89,6 +89,10 @@ func main() {
 }
 ```
 
+## Documentation
+
+See [docs.md](docs.md)
+
 ## Similar Projects
 
 - [genorm](https://github.com/mazrean/genorm)
