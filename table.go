@@ -89,6 +89,10 @@ func (t Table[T]) BasicSelect(columns ...string) sq.SelectBuilder {
 
 // Insert returns a buildable Insert statement that is bound to a specific table name
 func (t Table[T]) Insert() InsertBuilder {
+	if t.IsPostgres() {
+		return InsertBuilder{psql.Insert(t.Name)}
+	}
+
 	return InsertBuilder{sq.Insert(t.Name)}
 }
 
