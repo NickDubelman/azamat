@@ -23,16 +23,16 @@ func (t Table[T]) IsPostgres() bool {
 	return t.Postgres || Postgres
 }
 
-func (t Table[T]) GetAll(db *sqlx.DB) ([]T, error) {
-	return t.Select().All(db)
+func (t Table[T]) GetAll(runner Runner) ([]T, error) {
+	return t.Select().All(runner)
 }
 
-func (t Table[T]) GetByID(db *sqlx.DB, id int) (T, error) {
-	return t.Select().Where("id = ?", id).Only(db)
+func (t Table[T]) GetByID(runner Runner, id int) (T, error) {
+	return t.Select().Where("id = ?", id).Only(runner)
 }
 
-func (t Table[T]) GetByIDs(db *sqlx.DB, ids ...int) ([]T, error) {
-	return t.Select().Where(sq.Eq{"id": ids}).All(db)
+func (t Table[T]) GetByIDs(runner Runner, ids ...int) ([]T, error) {
+	return t.Select().Where(sq.Eq{"id": ids}).All(runner)
 }
 
 func (t Table[T]) Create(db *sqlx.DB) error {
