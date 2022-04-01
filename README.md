@@ -52,7 +52,7 @@ func main() {
     db, err := azamat.Connect(...)
 
     // We can GetByID and GetAll
-    todo, err := TodoTable.GetByID(db, todoID)
+    todo, err := TodoTable.GetByID(db, 420)
     todos, err := TodoTable.GetAll(db)
 
     // We can build queries:
@@ -72,7 +72,8 @@ func main() {
         Values(todoTitle, false)
 
     // To execute an insert/update/delete, we have Run()
-    todoID, err := insert.Run(db)
+    res, err := insert.Run(db)
+    todoID, err := res.LastInsertId()
 
     update := TodoTable.Update().
         Set("title", todoTitle+"🐻").
