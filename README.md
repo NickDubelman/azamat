@@ -20,7 +20,7 @@ If you are looking for an ORM-like experience in Go, I highly recommend [Ent](ht
 
 If you don't want to (or can't) use an ORM for some reason, azamat might be able to help you.
 
-Azamat is a thin collection of utilities glued together to help you structure your Go code to access SQL databases.
+Azamat is a _thin_ collection of utilities glued together to help you access SQL databases in Go:
 
 - [sqlx](http://jmoiron.github.io/sqlx/) extends Go's standard library [database/sql](https://pkg.go.dev/database/sql) with some useful utilities.
 - [squirrel](https://github.com/Masterminds/squirrel) 🐿 is a SQL query builder. It allows us to programmatically build SQL queries. This is easier to read, less error prone, and more ergonomic than building query strings manually.
@@ -55,23 +55,25 @@ func main() {
     todo, err := TodoTable.GetByID(db, todoID)
     todos, err := TodoTable.GetAll(db)
 
-    // We can build and execute queries
+    // We can build queries:
     query := TodoTable.Select().Where("completed = ?", false)
+
+    // To execute queries, we have All() and Only()
+
     todos, err = query.All(db) // 'All' gets all rows returned by the query
 
-    query = TodoTable.Select().Where("title = ?", todoTitle)
     todo, err = query.Only(db) // 'Only' expects a single row to be returned
 
-    // Insert an entry to table
+     // We can build insert/updates/deletes:
     todoTitle := "buy food for bear"
     insert := TodoTable.
         Insert().
         Columns("title", "completed").
         Values(todoTitle, false)
 
+    // To execute an insert/update/delete, we have Run()
     todoID, err := insert.Run(db)
 
-    // Update entry in table
     update := TodoTable.Update().
         Set("title", todoTitle+"🐻").
         Set("completed", true).
@@ -79,11 +81,10 @@ func main() {
 
     _, err = update.Run(db)
 
-    // Delete entry from table
     delete := TodoTable.Delete().Where("id = ?", todoID)
     _, err = delete.Run(db)
 
-    // All of the above code is able to be run on a DB or as part of a Tx
+    // All of the above code can be run on a DB or as part of a Tx
 }
 ```
 
