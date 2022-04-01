@@ -1,40 +1,22 @@
 package azamat
 
 import (
+	"database/sql"
+
 	sq "github.com/Masterminds/squirrel"
 )
 
 type InsertBuilder struct {
 	sq.InsertBuilder
-	postgres bool
 }
 
 func Insert(into string) InsertBuilder {
-	return InsertBuilder{sq.Insert(into), false}
+	return InsertBuilder{sq.Insert(into)}
 }
 
 // Run executes the insert and returns the last inserted ID
-func (b InsertBuilder) Run(runner Runner) (int, error) {
-	if b.IsPostgres() {
-		return runPostgresInsert(b, runner)
-	}
-
-	result, err := b.RunWith(runner).Exec()
-	if err != nil {
-		return 0, err
-	}
-
-	lastInsertID, err := result.LastInsertId()
-	return int(lastInsertID), err
-}
-
-func (b InsertBuilder) IsPostgres() bool {
-	return b.postgres || Postgres
-}
-
-func (b InsertBuilder) SetPostgres(isPostgres bool) InsertBuilder {
-	b.postgres = isPostgres
-	return b
+func (b InsertBuilder) Run(runner Runner) (sql.Result, error) {
+	return b.RunWith(runner).Exec()
 }
 
 func (b InsertBuilder) PlaceholderFormat(f sq.PlaceholderFormat) InsertBuilder {

@@ -24,7 +24,8 @@ func TestInsertRun(t *testing.T) {
 	// When creating a single entry...
 	todo1 := "buy bear food"
 	insert := Insert("todos").Columns("title").Values(todo1)
-	todoID, err := insert.Run(db)
+	result, err := insert.Run(db)
+	todoID, _ := result.LastInsertId()
 	require.NoError(t, err)
 	require.NotZero(t, todoID)
 
@@ -37,7 +38,8 @@ func TestInsertRun(t *testing.T) {
 	// When creating multiple entries...
 	todo2, todo3 := "buy Korky Buchek album", "fuel van"
 	insert = Insert("todos").Columns("title").Values(todo2).Values(todo3)
-	todoID, err = insert.Run(db)
+	result, err = insert.Run(db)
+	todoID, _ = result.LastInsertId()
 	require.NoError(t, err)
 	require.NotZero(t, todoID)
 
