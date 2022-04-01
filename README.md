@@ -72,8 +72,8 @@ func main() {
         Values(todoTitle, false)
 
     // To execute an insert/update/delete, we have Run()
-    res, err := insert.Run(db)
-    todoID, err := res.LastInsertId()
+    result, err := insert.Run(db)
+    todoID, err := result.LastInsertId()
 
     update := TodoTable.Update().
         Set("title", todoTitle+"🐻").
