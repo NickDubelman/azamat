@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
 )
 
 // View can be used when an entity doesn't map precisely to a specific table. This is
@@ -21,18 +20,18 @@ type View[T any] struct {
 	Query func() sq.SelectBuilder
 }
 
-func (v View[T]) GetAll(db *sqlx.DB) ([]T, error) {
+func (v View[T]) GetAll(runner Runner) ([]T, error) {
 	sql, args, err := v.Query().ToSql()
 	if err != nil {
 		return nil, err
 	}
 
 	var rows []T
-	err = db.Select(&rows, sql, args...)
+	err = runner.Select(&rows, sql, args...)
 	return rows, err
 }
 
-func (v View[T]) GetByID(db *sqlx.DB, id int) (T, error) {
+func (v View[T]) GetByID(runner Runner, id int) (T, error) {
 	var row T
 
 	idColumn := "id"
@@ -47,7 +46,7 @@ func (v View[T]) GetByID(db *sqlx.DB, id int) (T, error) {
 	}
 
 	var rows []T
-	if err := db.Select(&rows, sql, args...); err != nil {
+	if err := runner.Select(&rows, sql, args...); err != nil {
 		return row, err
 	}
 
@@ -62,7 +61,7 @@ func (v View[T]) GetByID(db *sqlx.DB, id int) (T, error) {
 	return rows[0], nil
 }
 
-func (v View[T]) GetByIDs(db *sqlx.DB, ids ...int) ([]T, error) {
+func (v View[T]) GetByIDs(runner Runner, ids ...int) ([]T, error) {
 	idColumn := "id"
 	idFrom := v.IDFrom.String()
 	if idFrom != "" {
@@ -75,6 +74,6 @@ func (v View[T]) GetByIDs(db *sqlx.DB, ids ...int) ([]T, error) {
 	}
 
 	var rows []T
-	err = db.Select(&rows, sql, args...)
+	err = runner.Select(&rows, sql, args...)
 	return rows, err
 }
