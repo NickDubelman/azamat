@@ -2,7 +2,7 @@
 
 ## Query Builders
 
-For building queries, azamat leans on [squirrel](https://github.com/Masterminds/squirrel) 🐿. It doesn't really have docs per se, but there are tests and examples that show how to build queries. It maps pretty directly to SQL and the source code is easy to understand.
+For building queries, azamat leans on [squirrel](https://github.com/Masterminds/squirrel). While 🐿 doesn't really have docs, it has tests and examples that show how to build queries. It also maps pretty directly to SQL and the source code is easy to understand.
 
 The azamat builders wrap the corresponding squirrel builders. The builder types are:
 
@@ -10,6 +10,22 @@ The azamat builders wrap the corresponding squirrel builders. The builder types 
 - `InsertBuilder`
 - `UpdateBuilder`
 - `DeleteBuilder`
+
+```go
+query := azamat.Select[User]("id", "name", "email").From("users")
+
+insert := azamat.
+    Insert("users").
+    Columns("name", "email").
+    Values("Borat", "borat@aol.com")
+
+update := azamat.
+    Update("users").
+    Set("name", "Pamela").
+    Where("id = ?", id)
+
+delete := azamat.Delete("users").Where("id = ?", id)
+```
 
 The azamat version of `SelectBuilder` includes `All()` and `Only()` methods for executing the query. `All` is used when you expect multiple results from the query, while `Only` is for when you expect just a single result.
 
@@ -34,14 +50,18 @@ The third requirement is a generic type param, which tells azamat what an indivi
 
 ```go
 type Todo struct {
-    ID int
-    Title string
+    ID        int
+    Title     string
     Completed bool
 }
 
 var TodoTable = azamat.Table[Todo]{
     Name: "todos",
-    Columns: []string{"id", "title", "completed"}
+    Columns: []string{
+        "id",
+        "title",
+        "completed",
+    },
 }
 ```
 
@@ -64,9 +84,9 @@ You may have code that sometimes runs on its own, and other times runs as part o
 
 ## View Struct
 
-Azamat includes a `View` struct that is similar to its `Table` struct. Despite its name, `azamat.View` does not refer specifically to [SQL "views"](https://www.w3schools.com/sql/sql_view.asp), but it is a very similar concept.
+Azamat includes a `View` struct that is similar to its `Table` struct. If you are familiar with [SQL "views"](https://www.w3schools.com/sql/sql_view.asp), azamat's `View` is very similar.
 
-A SQL view is essentially a "virtual" table: it is a dynamic query where the result set can be queried like a table. For example, you might represent a commonly-used join as a view so that you can just query the view, instead of always having to write the join.
+A SQL view is a dynamic query where the result set can be queried like a table. For example, you might represent a commonly-used join as a view so that you can just query the view, instead of always having to write the join.
 
 Azamat's `View` is intended to fulfill the same purpose. A `View` is only for querying, so it doesn't have `Insert()`, `Update()`, or `Delete()`. Like `Table`, it can be used to build custom queries with `Select()`, and it also has `GetAll`, `GetByID`, and `GetByIDs`.
 
@@ -88,8 +108,8 @@ If only some of your tables are Postgres, you can opt-in those specific tables b
 
 ## Other Notes
 
-### Why sqlx?
-
 ### Why squirrel?
+
+### Why sqlx?
 
 ### Why generics?

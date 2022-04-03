@@ -22,8 +22,8 @@ If you don't want to (or can't) use an ORM for some reason, azamat might be able
 
 Azamat is a _thin_ collection of utilities glued together to help you access SQL databases in Go:
 
-- [sqlx](http://jmoiron.github.io/sqlx/) extends Go's standard library [database/sql](https://pkg.go.dev/database/sql) with some useful utilities.
 - [squirrel](https://github.com/Masterminds/squirrel) 🐿 is a SQL query builder. It allows us to programmatically build SQL queries. This is easier to read, less error prone, and more ergonomic than building query strings manually.
+- [sqlx](http://jmoiron.github.io/sqlx/) extends Go's standard library [database/sql](https://pkg.go.dev/database/sql) with some useful utilities.
 - [generics](https://go.dev/doc/tutorial/generics) are a new feature added to Go in version 1.18 (March 2022). Azamat leverages generics to save you from having to write boilerplate code.
 
 ## Getting Started
@@ -45,7 +45,11 @@ type Todo struct {
 
 var TodoTable = azamat.Table[Todo]{
     Name:    "todos",
-    Columns: []string{"id", "title", "completed"},
+    Columns: []string{
+        "id",
+        "title",
+        "completed",
+    },
 }
 
 func main() {
@@ -93,8 +97,11 @@ func main() {
 
 See [docs.md](docs.md)
 
-## Similar Projects
+## Other Projects
 
-- [genorm](https://github.com/mazrean/genorm)
+- [Ent](https://entgo.io/)
+- [sqlboiler](https://github.com/volatiletech/sqlboiler)
+- [sqlc](https://sqlc.dev/)
 - [dbr](https://github.com/gocraft/dbr)
+- [genorm](https://github.com/mazrean/genorm)
 - [go-structured-query](https://github.com/bokwoon95/go-structured-query)
