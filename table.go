@@ -12,6 +12,7 @@ type Table[T any] struct {
 	Name      string
 	Columns   []string
 	RawSchema string
+	IDColumn  string
 	Postgres  bool
 }
 
@@ -28,11 +29,21 @@ func (t Table[T]) GetAll(runner Runner) ([]T, error) {
 }
 
 func (t Table[T]) GetByID(runner Runner, id int) (T, error) {
-	return t.Select().Where("id = ?", id).Only(runner)
+	idCol := "id"
+	if t.IDColumn != "" {
+		idCol = t.IDColumn
+	}
+
+	return t.Select().Where(sq.Eq{idCol: id}).Only(runner)
 }
 
 func (t Table[T]) GetByIDs(runner Runner, ids ...int) ([]T, error) {
-	return t.Select().Where(sq.Eq{"id": ids}).All(runner)
+	idCol := "id"
+	if t.IDColumn != "" {
+		idCol = t.IDColumn
+	}
+
+	return t.Select().Where(sq.Eq{idCol: ids}).All(runner)
 }
 
 func (t Table[T]) Create(db *sqlx.DB) error {

@@ -77,6 +77,33 @@ func TestTableGetByID(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 2, todo.ID)
 	assert.Equal(t, todo2, todo.Title)
+
+	// When the id column is not named id
+	type User struct {
+		ID   int `db:"user_id"`
+		Name string
+	}
+
+	UserTable := Table[User]{
+		Name:     "users",
+		Columns:  []string{"user_id", "name"},
+		IDColumn: "user_id",
+	}
+
+	db.MustExec(`CREATE TABLE users (
+		user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL
+	)`)
+
+	// Create some users
+	user1, user2 := "Borat", "Pamela"
+	db.MustExec(`INSERT INTO users (name) VALUES (?), (?)`, user1, user2)
+
+	// When there are multiple entries in the table...
+	user, err := UserTable.GetByID(db, 2)
+	require.NoError(t, err)
+	assert.Equal(t, 2, user.ID)
+	assert.Equal(t, user2, user.Name)
 }
 
 func TestTableGetByIDs(t *testing.T) {
@@ -116,6 +143,36 @@ func TestTableGetByIDs(t *testing.T) {
 	assert.Equal(t, todo1, todos[0].Title)
 	assert.Equal(t, 3, todos[1].ID)
 	assert.Equal(t, todo3, todos[1].Title)
+
+	// When the id column is not named id
+	type User struct {
+		ID   int `db:"user_id"`
+		Name string
+	}
+
+	UserTable := Table[User]{
+		Name:     "users",
+		Columns:  []string{"user_id", "name"},
+		IDColumn: "user_id",
+	}
+
+	db.MustExec(`CREATE TABLE users (
+		user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL
+	)`)
+
+	// Create some users
+	user1, user2 := "Borat", "Pamela"
+	db.MustExec(`INSERT INTO users (name) VALUES (?), (?)`, user1, user2)
+
+	// When there are multiple entries in the table...
+	users, err := UserTable.GetByIDs(db, 1, 2)
+	require.NoError(t, err)
+	require.Len(t, users, 2)
+	assert.Equal(t, 1, users[0].ID)
+	assert.Equal(t, user1, users[0].Name)
+	assert.Equal(t, 2, users[1].ID)
+	assert.Equal(t, user2, users[1].Name)
 }
 
 func TestCreate(t *testing.T) {
