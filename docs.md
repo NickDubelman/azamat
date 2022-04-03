@@ -76,6 +76,18 @@ Optionally, we can specify the `RawSchema` for a `Table` definition. This serves
 
 If you do plan to leverage the `RawSchema` as documentation or in tests, you just have to make sure you keep it in-sync with your actual db tables. In order for the documentation to be useful, it has to be accurate.
 
+### Table `IDColumn`
+
+If you have a table where the primary key isn't named "id", you can specify an `IDColumn` that will be used by `GetByID` and `GetByIDs`.
+
+```go
+UserTable := Table[User]{
+	Name:     "users",
+	Columns:  []string{"user_id", "name"},
+	IDColumn: "user_id",
+}
+```
+
 ## Runner Interface
 
 You may have code that sometimes runs on its own, and other times runs as part of a transaction. To address this use case, azamat has a `Runner` interface. A `Runner` is basically a type union: `sqlx.DB | sqlx.Tx`.
